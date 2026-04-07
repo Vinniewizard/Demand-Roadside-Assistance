@@ -20,6 +20,8 @@ export default function UserDashboard() {
   
   const [showProfile, setShowProfile] = useState(false);
   const [profileData, setProfileData] = useState({ phone: '', licenseNumber: '', vehiclePlate: '', idNumber: '' });
+  const [nearbyProviders, setNearbyProviders] = useState<any[]>([]);
+  const [fetchingNearby, setFetchingNearby] = useState(false);
   
   const hasActiveRequest = requests.some(r => r.status !== 'COMPLETED' && r.status !== 'CANCELLED');
   const activeRequest = requests.find(r => r.status !== 'COMPLETED' && r.status !== 'CANCELLED');
@@ -28,8 +30,23 @@ export default function UserDashboard() {
       try {
           const res = await fetch(`/api/requests?userId=${uid}`);
           const data = await res.json();
-          setRequests(data);
-      } catch (err) { console.error(err); }
+          if (Array.isArray(data)) {
+              setRequests(data);
+          }
+      } catch (err) { console.error('History Fetch Error:', err); }
+  };
+
+  const fetchNearby = async (lat: number, lon: number) => {
+      if (fetchingNearby) return;
+      setFetchingNearby(true);
+      try {
+          const res = await fetch(`/api/providers/nearby?lat=${lat}&lon=${lon}`);
+          const data = await res.json();
+          if (Array.isArray(data)) {
+              setNearbyProviders(data);
+          }
+      } catch (err) { console.error('Nearby Fetch Error:', err); }
+      finally { setFetchingNearby(false); }
   };
 
   useEffect(() => {
@@ -49,15 +66,27 @@ export default function UserDashboard() {
         const u = JSON.parse(savedUser);
         setUser(u);
         setProfileData({ phone: u.phone || '', licenseNumber: u.licenseNumber || '', vehiclePlate: u.vehiclePlate || '', idNumber: u.idNumber || '' });
+        
+        // Immediate fetch and then polling
         fetchHistory(u.id);
         const handle = setInterval(() => fetchHistory(u.id), 5000);
+        
+        setSessionChecked(true);
         return () => {
             clearInterval(handle);
             if (watchId) navigator.geolocation.clearWatch(watchId);
         };
+    } else {
+        setSessionChecked(true);
     }
-    setSessionChecked(true);
   }, []);
+
+  // Fetch nearby providers when location updates
+  useEffect(() => {
+    if (location?.lat && location?.lon) {
+        fetchNearby(location.lat, location.lon);
+    }
+  }, [location?.lat, location?.lon]);
 
   const handleRequest = async () => {
     if (!user?.id) return alert('Session expired.');
@@ -279,7 +308,42 @@ export default function UserDashboard() {
                    {loading ? <div className="animate-spin" style={{ width: '28px', height: '28px', border: '3px solid white', borderTopColor: 'transparent', borderRadius: '50%' }} /> : <>{hasActiveRequest ? 'SYSTEM LOCKED: DISPATCH ACTIVE' : 'LAUNCH DISPATCH'}</>}
                 </button>
             </div>
-         </section>
+          </section>
+
+          {/* New Section: Nearest Support Fleet */}
+          <section className="animate-fade-up">
+              <h2 className="font-heading" style={{ fontSize: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <ShieldAlert size={20} color="hsl(var(--success))" /> 
+                  Rescue Fleet Nearby
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  {nearbyProviders.length === 0 && !fetchingNearby ? (
+                      <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center', opacity: 0.6 }}>
+                          <p style={{ fontSize: '0.8rem' }}>Scanning for available suppliers in your radius...</p>
+                      </div>
+                  ) : (
+                      nearbyProviders.map(p => (
+                          <div key={p.id} className="glass-panel" style={{ padding: '1.25rem', border: '1px solid hsla(var(--glass-border) / 0.5)', background: 'hsla(var(--success) / 0.03)' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                  <h3 style={{ fontWeight: 900, fontSize: '0.9rem' }}>{p.businessName || p.name}</h3>
+                                  <span style={{ fontSize: '0.7rem', fontWeight: 900, color: 'hsl(var(--success))', background: 'hsla(var(--success) / 0.1)', padding: '0.2rem 0.6rem', borderRadius: '10px' }}>
+                                      {p.distance.toFixed(1)} KM
+                                  </span>
+                              </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                  <p className="text-muted" style={{ fontSize: '0.75rem' }}>{p.serviceType} Specialized</p>
+                                  <p style={{ fontSize: '0.75rem', fontWeight: 800, opacity: 0.8 }}>Est. KES {p.baseFee?.toLocaleString()}</p>
+                              </div>
+                          </div>
+                      ))
+                  )}
+                  {fetchingNearby && (
+                      <div style={{ textAlign: 'center', padding: '1rem' }}>
+                          <div className="animate-spin" style={{ width: '20px', height: '20px', border: '2px solid hsl(var(--primary))', borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto' }} />
+                      </div>
+                  )}
+              </div>
+          </section>
 
          {/* History Stream */}
          <section>
