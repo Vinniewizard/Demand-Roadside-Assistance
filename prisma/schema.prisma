@@ -13,7 +13,7 @@ model User {
   name      String
   password  String
   phone     String?
-  role          String   @default("MOTORIST") // MOTORIST, PROVIDER, or ADMIN
+  role          String   @default("Drivers") // Drivers, PROVIDER, or ADMIN
   
   // Verification details
   licenseNumber String?
@@ -51,7 +51,7 @@ model AssistanceRequest {
   serviceType String   
   fuelType    String?  
   fuelAmount  String?  
-  description String?  // Detailed motorist problem description
+  description String?  // Detailed Drivers problem description
   
   latitude    Float
   longitude   Float
@@ -61,7 +61,7 @@ model AssistanceRequest {
   commissionAmount Float?  
   estimatedArrival Int?    
   
-  rating           Int?      // 1-5 Star rating from Motorist
+  rating           Int?      // 1-5 Star rating from Drivers
   isPaid           Boolean   @default(false)
   paymentMethod    String?   @default("CASH_OR_WALLET")
   

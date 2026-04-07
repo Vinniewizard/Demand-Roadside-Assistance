@@ -3,17 +3,17 @@ import { ShieldCheck, Globe, GitBranch, Mail } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer style={{ 
-      background: 'hsl(var(--bg) / 0.8)', 
+    <footer style={{
+      background: 'hsl(var(--bg) / 0.8)',
       backdropFilter: 'blur(20px)',
       borderTop: '1px solid hsl(var(--glass-border))',
       padding: '4rem 1.5rem 2rem',
       position: 'relative',
       zIndex: 10
     }}>
-      <div className="container" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+      <div className="container" style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: '4rem',
         marginBottom: '4rem',
         maxWidth: '1200px',
@@ -21,22 +21,22 @@ export default function Footer() {
       }}>
         <div style={{ maxWidth: '300px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
-             <ShieldCheck size={28} color="hsl(var(--primary))" />
-             <span style={{ fontSize: '1.5rem', fontWeight: 900 }} className="font-heading text-gradient">Demand Roadside</span>
+            <ShieldCheck size={28} color="hsl(var(--primary))" />
+            <span style={{ fontSize: '1.5rem', fontWeight: 900 }} className="font-heading text-gradient">Drivers Control</span>
           </div>
           <p className="text-muted" style={{ fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-            The Kericho Hub emergency response system. Our mission is to ensure no motorist ever feels stranded in the region.
+            The Kericho Hub emergency response system. Our mission is to ensure no Drivers ever feels stranded in the region.
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-             <Link href="#" className="btn-premium btn-outline" style={{ padding: '0.5rem', borderRadius: '10px' }}>
-               <Globe size={18} />
-             </Link>
-             <Link href="#" className="btn-premium btn-outline" style={{ padding: '0.5rem', borderRadius: '10px' }}>
-               <GitBranch size={18} />
-             </Link>
-             <Link href="#" className="btn-premium btn-outline" style={{ padding: '0.5rem', borderRadius: '10px' }}>
-               <Mail size={18} />
-             </Link>
+            <Link href="#" className="btn-premium btn-outline" style={{ padding: '0.5rem', borderRadius: '10px' }}>
+              <Globe size={18} />
+            </Link>
+            <Link href="#" className="btn-premium btn-outline" style={{ padding: '0.5rem', borderRadius: '10px' }}>
+              <GitBranch size={18} />
+            </Link>
+            <Link href="#" className="btn-premium btn-outline" style={{ padding: '0.5rem', borderRadius: '10px' }}>
+              <Mail size={18} />
+            </Link>
           </div>
         </div>
 
@@ -61,14 +61,14 @@ export default function Footer() {
         </div>
 
         <div>
-           <h4 className="font-heading" style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>Regional Core</h4>
-           <p className="text-muted" style={{ fontSize: '0.85rem' }}>Serving the Kericho cluster with precision emergency response.</p>
-           <button className="btn-premium btn-primary" style={{ marginTop: '1rem', width: '100%', fontSize: '0.8rem', padding: '0.75rem' }}>HUB STATUS: ONLINE</button>
+          <h4 className="font-heading" style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>Regional Core</h4>
+          <p className="text-muted" style={{ fontSize: '0.85rem' }}>Serving the Kericho cluster with precision emergency response.</p>
+          <button className="btn-premium btn-primary" style={{ marginTop: '1rem', width: '100%', fontSize: '0.8rem', padding: '0.75rem' }}>HUB STATUS: ONLINE</button>
         </div>
       </div>
-      
+
       <div style={{ textAlign: 'center', paddingTop: '2rem', borderTop: '1px solid hsl(var(--glass-border) / 0.5)', opacity: 0.5, fontSize: '0.8rem' }}>
-        © 2026 Demand Roadside | Kericho Hub. All rights reserved.
+        © 2026 Roadside Assistance Platform | Kericho County. All rights reserved.
       </div>
     </footer>
   );

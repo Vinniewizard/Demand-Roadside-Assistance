@@ -4,13 +4,13 @@ import { ShieldCheck, Truck, Droplet, ArrowRight, Zap, MapPin, Gauge, Shield, Cl
 export default function Home() {
   return (
     <main style={{ paddingTop: '8rem', paddingBottom: '6rem', flexDirection: 'column' }} className="flex-center">
-      
+
       {/* Hero Section */}
       <section className="container" style={{ textAlign: 'center', marginBottom: '8rem' }}>
         <div className="glass-panel animate-fade-up" style={{ padding: '5rem 2rem', maxWidth: '1000px', margin: '0 auto', position: 'relative', overflow: 'hidden' }}>
           {/* Decorative Elements */}
           <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', background: 'hsl(var(--primary) / 0.1)', borderRadius: '50%', filter: 'blur(80px)' }} />
-          
+
           <div className="flex-center animate-float" style={{ marginBottom: '2.5rem' }}>
             <div style={{ position: 'relative' }}>
               <div style={{ position: 'absolute', inset: '-25px', background: 'hsl(var(--primary) / 0.3)', borderRadius: '50%', filter: 'blur(30px)' }} />
@@ -18,9 +18,10 @@ export default function Home() {
             </div>
           </div>
 
-          <h1 style={{ fontSize: 'clamp(3rem, 10vw, 5.5rem)', marginBottom: '1.5rem', lineHeight: 1, letterSpacing: '-0.04em' }}>
-            <span className="text-gradient">Premium</span> <br />
-            Roadside Safety
+          <h1 style={{ fontSize: 'clamp(2rem, 8vw, 4rem)', marginBottom: '1.5rem', lineHeight: 1.1, letterSpacing: '-0.04em' }}>
+            <span className="text-gradient">On Demand</span> <br />
+            Roadside Assistance <br />
+            <span style={{ fontSize: '0.6em', opacity: 0.8 }}>Kericho County</span>
           </h1>
 
           <p className="text-muted" style={{ fontSize: '1.35rem', marginBottom: '3.5rem', maxWidth: '700px', margin: '0 auto 3.5rem auto', lineHeight: 1.5 }}>
@@ -45,8 +46,8 @@ export default function Home() {
       {/* Services Section */}
       <section className="container" style={{ marginBottom: '10rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-           <h2 className="font-heading" style={{ fontSize: '3rem', marginBottom: '1rem' }}>Our <span className="text-gradient">Expertise</span></h2>
-           <p className="text-muted" style={{ fontSize: '1.1rem' }}>Specialized emergency services designed for modern motorists.</p>
+          <h2 className="font-heading" style={{ fontSize: '3rem', marginBottom: '1rem' }}>Our <span className="text-gradient">Expertise</span></h2>
+          <p className="text-muted" style={{ fontSize: '1.1rem' }}>Specialized emergency services designed for modern Driverss.</p>
         </div>
 
         <div className="grid-auto">
@@ -86,42 +87,42 @@ export default function Home() {
 
           <div className="grid-auto" style={{ gap: '3rem' }}>
             <div style={{ display: 'flex', gap: '2rem' }}>
-               <div style={{ 
-                 fontSize: '3rem', fontWeight: 900, opacity: 0.1, lineHeight: 1,
-                 fontFamily: 'Outfit'
-               }}>01</div>
-               <div>
-                  <h4 className="font-heading" style={{ fontSize: '1.5rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Gauge size={20} color="hsl(var(--primary))" /> Instant Alert
-                  </h4>
-                  <p className="text-muted">Request help via our intuitive dashboard. Your location and vehicle details are encrypted and broadcasted to nearby responders.</p>
-               </div>
+              <div style={{
+                fontSize: '3rem', fontWeight: 900, opacity: 0.1, lineHeight: 1,
+                fontFamily: 'Outfit'
+              }}>01</div>
+              <div>
+                <h4 className="font-heading" style={{ fontSize: '1.5rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Gauge size={20} color="hsl(var(--primary))" /> Instant Alert
+                </h4>
+                <p className="text-muted">Request help via our intuitive dashboard. Your location and vehicle details are encrypted and broadcasted to nearby responders.</p>
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '2rem' }}>
-               <div style={{ 
-                 fontSize: '3rem', fontWeight: 900, opacity: 0.1, lineHeight: 1,
-                 fontFamily: 'Outfit'
-               }}>02</div>
-               <div>
-                  <h4 className="font-heading" style={{ fontSize: '1.5rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Shield size={20} color="hsl(var(--accent))" /> Verified Dispatch
-                  </h4>
-                  <p className="text-muted">Our smart algorithm assigns the most qualified, highly-rated provider within your immediate vicinity.</p>
-               </div>
+              <div style={{
+                fontSize: '3rem', fontWeight: 900, opacity: 0.1, lineHeight: 1,
+                fontFamily: 'Outfit'
+              }}>02</div>
+              <div>
+                <h4 className="font-heading" style={{ fontSize: '1.5rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Shield size={20} color="hsl(var(--accent))" /> Verified Dispatch
+                </h4>
+                <p className="text-muted">Our smart algorithm assigns the most qualified, highly-rated provider within your immediate vicinity.</p>
+              </div>
             </div>
 
             <div style={{ display: 'flex', gap: '2rem' }}>
-               <div style={{ 
-                 fontSize: '3rem', fontWeight: 900, opacity: 0.1, lineHeight: 1,
-                 fontFamily: 'Outfit'
-               }}>03</div>
-               <div>
-                  <h4 className="font-heading" style={{ fontSize: '1.5rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Clock size={20} color="hsl(var(--success))" /> Precision Track
-                  </h4>
-                  <p className="text-muted">Monitor your responder in real-time with precise GPS tracking and accurate ETA updates until the resolution is complete.</p>
-               </div>
+              <div style={{
+                fontSize: '3rem', fontWeight: 900, opacity: 0.1, lineHeight: 1,
+                fontFamily: 'Outfit'
+              }}>03</div>
+              <div>
+                <h4 className="font-heading" style={{ fontSize: '1.5rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Clock size={20} color="hsl(var(--success))" /> Precision Track
+                </h4>
+                <p className="text-muted">Monitor your responder in real-time with precise GPS tracking and accurate ETA updates until the resolution is complete.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -129,16 +130,16 @@ export default function Home() {
 
       {/* Trust Quote */}
       <section className="container" style={{ textAlign: 'center', marginBottom: '10rem' }}>
-         <div className="glass-panel" style={{ padding: '6rem 3rem', background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))' }}>
-            <h2 className="font-heading" style={{ fontSize: '2.5rem', fontStyle: 'italic', maxWidth: '800px', margin: '0 auto 2rem auto', fontWeight: 600 }}>
-              "In a moment of vulnerability, RoadSafe provided the speed and professionalism I didn't think was possible in roadside assistance."
-            </h2>
-            <div className="flex-center" style={{ gap: '1rem' }}>
-               <div style={{ width: '40px', height: '1px', background: 'hsl(var(--primary))' }} />
-               <span style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Precious Atamba  EV Owner </span>
-               <div style={{ width: '40px', height: '1px', background: 'hsl(var(--primary))' }} />
-            </div>
-         </div>
+        <div className="glass-panel" style={{ padding: '6rem 3rem', background: 'linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))' }}>
+          <h2 className="font-heading" style={{ fontSize: '2.5rem', fontStyle: 'italic', maxWidth: '800px', margin: '0 auto 2rem auto', fontWeight: 600 }}>
+            "In a moment of vulnerability, RoadSafe provided the speed and professionalism I didn't think was possible in roadside assistance."
+          </h2>
+          <div className="flex-center" style={{ gap: '1rem' }}>
+            <div style={{ width: '40px', height: '1px', background: 'hsl(var(--primary))' }} />
+            <span style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Precious Atamba  EV Owner </span>
+            <div style={{ width: '40px', height: '1px', background: 'hsl(var(--primary))' }} />
+          </div>
+        </div>
       </section>
 
     </main>

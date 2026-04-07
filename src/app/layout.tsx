@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata: Metadata = {
-  title: 'Demand Roadside Assistance | Kericho Reach',
-  description: 'Instant, professional-grade roadside rescue specifically tailored for Kericho motorists. Rapid dispatch, transparent pricing, and verified providers.',
+  title: 'Kericho Rescue: On Demand Roadside Assistance',
+  description: 'Instant, professional-grade roadside rescue specifically tailored for Kericho Driverss. Rapid dispatch, transparent pricing, and verified providers.',
 };
 
 export default function RootLayout({

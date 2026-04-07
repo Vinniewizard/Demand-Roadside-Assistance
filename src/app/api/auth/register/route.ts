@@ -14,12 +14,12 @@ export async function POST(req: Request) {
         email,
         password, // In production, hash this!
         phone,
-        role: role || "MOTORIST",
+        role: role || "Drivers",
         licenseNumber,
         vehiclePlate,
         businessName,
         isVerified: !!(licenseNumber && vehiclePlate),
-        isApproved: role === "MOTORIST", // Motorists approved by default, Suppliers need Admin
+        isApproved: role === "Drivers", // Driverss approved by default, Suppliers need Admin
       },
     });
 
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error("Registration Error:", error);
     if (error.code === 'P2002') {
-        return NextResponse.json({ error: "Email already exists in Kericho Hub." }, { status: 400 });
+      return NextResponse.json({ error: "Email already exists in Kericho Hub." }, { status: 400 });
     }
     return NextResponse.json({ error: "Registration failed." }, { status: 500 });
   }

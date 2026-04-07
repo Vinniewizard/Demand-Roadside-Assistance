@@ -12,6 +12,26 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const resolvedParams = await params;
     const { id } = resolvedParams;
 
+    // Security: Fetch current request and verify provider approval status if needed
+    const currentRequest = await prisma.assistanceRequest.findUnique({
+      where: { id },
+      include: { provider: true }
+    });
+
+    if (!currentRequest) {
+      return NextResponse.json({ error: 'Request not found' }, { status: 404 });
+    }
+
+    // If a provider is updating status to ACCEPTED or EN_ROUTE, double-check approval
+    if ((status === 'ACCEPTED' || status === 'EN_ROUTE') && currentRequest.providerId) {
+      const provider = await prisma.user.findUnique({
+        where: { id: currentRequest.providerId }
+      });
+      if (!provider?.isApproved) {
+        return NextResponse.json({ error: 'Assigned supplier is not yet certified by Kericho Hub.' }, { status: 403 });
+      }
+    }
+
     const updatedRequest = await prisma.assistanceRequest.update({
       where: { id },
       data: { 

@@ -36,7 +36,7 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
     }, [userLat, userLon, providerLat, providerLon, isEnRoute, mapRef]);
 
     // High quality HTML markers replacing missing webpack assets
-    const motoristIcon = L.divIcon({
+    const DriversIcon = L.divIcon({
         html: `<div style="background: hsl(var(--danger)); padding: 0.4rem; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 15px hsla(var(--danger) / 0.8); display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>`,
         className: '',
         iconSize: [30, 30],
@@ -54,15 +54,15 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
     const centerLon = providerLon && isEnRoute ? (userLon + providerLon) / 2 : userLon;
 
     // Smart Distance Calculation for HUD
-    const distanceKm = (providerLat && providerLon) 
-        ? calculateDistance(userLat, userLon, providerLat, providerLon).toFixed(1) 
+    const distanceKm = (providerLat && providerLon)
+        ? calculateDistance(userLat, userLon, providerLat, providerLon).toFixed(1)
         : null;
 
     return (
         <div className="map-container-spacious" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', border: '1px solid hsla(var(--glass-border) / 0.8)', borderRadius: '30px' }}>
-            <MapContainer 
-                center={[centerLat, centerLon]} 
-                zoom={14} 
+            <MapContainer
+                center={[centerLat, centerLon]}
+                zoom={14}
                 style={{ width: '100%', height: '100%' }}
                 ref={setMapRef}
                 zoomControl={false}
@@ -71,9 +71,9 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                     attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 />
-                
-                {/* Motorist Marker with Live Pulse */}
-                <Marker position={[userLat, userLon]} icon={motoristIcon}>
+
+                {/* Drivers Marker with Live Pulse */}
+                <Marker position={[userLat, userLon]} icon={DriversIcon}>
                     <Popup>
                         <div style={{ fontWeight: 900, color: 'hsl(var(--primary))' }}>LIVE GPS NODE</div>
                         <div style={{ fontSize: '0.7rem' }}>Accuracy: High Precision</div>
@@ -85,23 +85,23 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
                         <Marker position={[providerLat, providerLon]} icon={supplierIcon}>
                             <Popup>Kericho Hub Rescue Provider</Popup>
                         </Marker>
-                        <Polyline 
-                            positions={[[userLat, userLon], [providerLat, providerLon]]} 
-                            color="hsl(var(--primary))" 
-                            dashArray="5, 10" 
-                            weight={3} 
-                            opacity={0.7} 
+                        <Polyline
+                            positions={[[userLat, userLon], [providerLat, providerLon]]}
+                            color="hsl(var(--primary))"
+                            dashArray="5, 10"
+                            weight={3}
+                            opacity={0.7}
                         />
                     </>
                 )}
             </MapContainer>
-            
+
             {/* Floating HUD - Optimized for Mobile/Desktop */}
             <div className="floating-hud" style={{ position: 'absolute', bottom: 'clamp(1rem, 3vw, 2rem)', left: 'clamp(1rem, 3vw, 2rem)', background: 'hsla(var(--glass-bg))', backdropFilter: 'blur(30px)', padding: '0.8rem 1.25rem', borderRadius: '20px', fontSize: '0.7rem', letterSpacing: '0.05em', fontWeight: 900, border: '1px solid hsla(var(--glass-border) / 0.5)', boxShadow: '0 15px 35px rgba(0,0,0,0.2)', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '0.75rem', maxWidth: 'calc(100% - 4rem)', color: 'hsl(var(--fg))' }}>
-               <div className="pulse-primary" style={{ width: '10px', height: '10px', borderRadius: '50%', background: isEnRoute ? 'hsl(var(--success))' : 'hsl(var(--primary))', flexShrink: 0 }} />
-               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase' }}>
+                <div className="pulse-primary" style={{ width: '10px', height: '10px', borderRadius: '50%', background: isEnRoute ? 'hsl(var(--success))' : 'hsl(var(--primary))', flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase' }}>
                     {isEnRoute ? `RADAR ACTIVE • ${distanceKm} KM AWAY` : 'LOCATING NEAREST RESCUE NODE...'}
-               </span>
+                </span>
             </div>
         </div>
     );

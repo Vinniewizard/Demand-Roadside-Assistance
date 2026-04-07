@@ -35,8 +35,8 @@ export default function Navbar() {
               {isProvider ? <Navigation size={20} color="hsl(var(--accent))" /> : <ShieldCheck size={20} color="hsl(var(--primary))" />}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
-                <span className={isProvider ? "" : "text-gradient"} style={{ fontSize: '1.1rem' }}>Demand Roadside</span>
-                <span style={{ fontSize: '0.65rem', opacity: 0.6, letterSpacing: '0.1em', fontWeight: 900 }}>KERICHO REGION</span>
+                <span className={isProvider ? "" : "text-gradient"} style={{ fontSize: '1.1rem' }}>Drivers Control</span>
+                <span style={{ fontSize: '0.6rem', opacity: 0.6, letterSpacing: '0.05em', fontWeight: 900 }}>On Demand Roadside Assistance Platform in Kericho County</span>
             </div>
           </div>
         </Link>
