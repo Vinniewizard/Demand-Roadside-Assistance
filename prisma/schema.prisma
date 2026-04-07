@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  phone     String?
+  role          String   @default("MOTORIST") // MOTORIST, PROVIDER, or ADMIN
+  
+  // Verification details
+  licenseNumber String?
+  vehiclePlate  String?
+  idNumber      String?
+  isVerified    Boolean  @default(false)
+  
+  requests  AssistanceRequest[] @relation("UserRequests")
+  jobs      AssistanceRequest[] @relation("ProviderJobs")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Provider-specific details (nullable if not provider)
+  businessName String? // e.g., "Total Petrol Station Kericho"
+  serviceType  String? // e.g., "TOWING", "FUEL", "BOTH"
+  latitude     Float?
+  longitude    Float?
+  isAvailable  Boolean @default(false)
+  isApproved   Boolean @default(false) // Admin must approve supplier first
+
+  // Custom Pricing & Revenue
+  baseFee      Float?   @default(500)
+  perKmRate    Float?   @default(50)
+  revenueEarned Float?  @default(0)
+}
+
+model AssistanceRequest {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation("UserRequests", fields: [userId], references: [id])
+  providerId  String?
+  provider    User?    @relation("ProviderJobs", fields: [providerId], references: [id])
+  
+  status      String   @default("PENDING")
+  serviceType String   
+  fuelType    String?  
+  fuelAmount  String?  
+  description String?  // Detailed motorist problem description
+  
+  latitude    Float
+  longitude   Float
+  address     String?
+
+  deliveryFee      Float?
+  commissionAmount Float?  
+  estimatedArrival Int?    
+  
+  rating           Int?      // 1-5 Star rating from Motorist
+  isPaid           Boolean   @default(false)
+  paymentMethod    String?   @default("CASH_OR_WALLET")
+  
+  acceptedAt  DateTime?
+  completedAt DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  transaction Transaction?
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  requestId   String   @unique
+  request     AssistanceRequest @relation(fields: [requestId], references: [id])
+  amount      Float
+  status      String   @default("COMPLETED") // PENDING, SUCCESS, FAILED
+  rating      Int?     // 1-5 stars
+  feedback    String?
+  
+  createdAt   DateTime @default(now())
+}
