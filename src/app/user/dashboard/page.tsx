@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Truck, Clock, MapPin, ShieldAlert, CreditCard, AlertCircle, Zap, ArrowRight, Droplet, User as UserIcon, MessageSquare, Star, Navigation, Wrench, CircleDot, Battery, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
-import SimulationMap from '@/components/LiveTrackerWrapper';
+import LiveRadar from '@/components/LiveTrackerWrapper';
 
 export default function UserDashboard() {
   const [loading, setLoading] = useState(false);
@@ -216,8 +216,8 @@ export default function UserDashboard() {
                   </div>
               </div>
 
-              <div style={{ height: '700px', borderRadius: '30px', overflow: 'hidden', border: '1px solid hsla(var(--glass-border) / 0.8)', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)', marginBottom: '2.5rem' }}>
-                  <SimulationMap 
+              <div style={{ height: 'clamp(380px, 60vh, 700px)', borderRadius: '30px', overflow: 'hidden', border: '1px solid hsla(var(--glass-border) / 0.8)', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)', marginBottom: '2.5rem' }}>
+                  <LiveRadar 
                       userLat={activeRequest.latitude} 
                       userLon={activeRequest.longitude} 
                       providerLat={activeRequest.provider?.latitude} 

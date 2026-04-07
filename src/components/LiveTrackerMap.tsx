@@ -59,7 +59,7 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
         : null;
 
     return (
-        <div className="map-container-spacious" style={{ position: 'relative', width: '100%', overflow: 'hidden', border: '1px solid hsla(var(--glass-border) / 0.8)', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="map-container-spacious" style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden', border: '1px solid hsla(var(--glass-border) / 0.8)', borderRadius: '30px' }}>
             <MapContainer 
                 center={[centerLat, centerLon]} 
                 zoom={14} 
@@ -72,8 +72,12 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
                     attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 />
                 
+                {/* Motorist Marker with Live Pulse */}
                 <Marker position={[userLat, userLon]} icon={motoristIcon}>
-                    <Popup>Motorist Incident Location</Popup>
+                    <Popup>
+                        <div style={{ fontWeight: 900, color: 'hsl(var(--primary))' }}>LIVE GPS NODE</div>
+                        <div style={{ fontSize: '0.7rem' }}>Accuracy: High Precision</div>
+                    </Popup>
                 </Marker>
 
                 {isEnRoute && providerLat && providerLon && (
@@ -92,10 +96,11 @@ export default function LiveTrackerMap({ userLat, userLon, providerLat, provider
                 )}
             </MapContainer>
             
-            <div className="floating-hud" style={{ position: 'absolute', bottom: '1.25rem', left: '1.25rem', background: 'hsla(var(--glass-bg))', backdropFilter: 'blur(30px)', padding: '0.8rem 1.25rem', borderRadius: '20px', fontSize: '0.75rem', letterSpacing: '0.05em', fontWeight: 900, border: '1px solid hsla(var(--glass-border) / 0.5)', boxShadow: '0 15px 35px rgba(0,0,0,0.2)', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '0.75rem', maxWidth: 'calc(100% - 2.5rem)', color: 'hsl(var(--fg))' }}>
-               <div className={isEnRoute ? 'pulse-primary' : ''} style={{ width: '10px', height: '10px', borderRadius: '50%', background: isEnRoute ? 'hsl(var(--success))' : 'hsl(var(--danger))', flexShrink: 0 }} />
-               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {isEnRoute ? `MISSION ACTIVE • ${distanceKm} KM AWAY` : 'AWAITING RESPONSE'}
+            {/* Floating HUD - Optimized for Mobile/Desktop */}
+            <div className="floating-hud" style={{ position: 'absolute', bottom: 'clamp(1rem, 3vw, 2rem)', left: 'clamp(1rem, 3vw, 2rem)', background: 'hsla(var(--glass-bg))', backdropFilter: 'blur(30px)', padding: '0.8rem 1.25rem', borderRadius: '20px', fontSize: '0.7rem', letterSpacing: '0.05em', fontWeight: 900, border: '1px solid hsla(var(--glass-border) / 0.5)', boxShadow: '0 15px 35px rgba(0,0,0,0.2)', zIndex: 1000, display: 'flex', alignItems: 'center', gap: '0.75rem', maxWidth: 'calc(100% - 4rem)', color: 'hsl(var(--fg))' }}>
+               <div className="pulse-primary" style={{ width: '10px', height: '10px', borderRadius: '50%', background: isEnRoute ? 'hsl(var(--success))' : 'hsl(var(--primary))', flexShrink: 0 }} />
+               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase' }}>
+                    {isEnRoute ? `RADAR ACTIVE • ${distanceKm} KM AWAY` : 'LOCATING NEAREST RESCUE NODE...'}
                </span>
             </div>
         </div>
