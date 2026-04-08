@@ -16,8 +16,8 @@ export async function GET(req: Request) {
     const providers = await prisma.user.findMany({
       where: {
         role: "PROVIDER",
-        isApproved: true,
         isAvailable: true,
+        isSuspended: false,
       },
       select: {
         id: true,

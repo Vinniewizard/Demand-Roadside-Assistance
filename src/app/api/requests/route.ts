@@ -36,7 +36,12 @@ export async function POST(req: Request) {
     const [user, providers] = await Promise.all([
         prisma.user.findUnique({ where: { id: userId }, select: { licenseNumber: true, vehiclePlate: true } }),
         prisma.user.findMany({
-            where: { role: "PROVIDER", isAvailable: true, isApproved: true, OR: [{ serviceType }, { serviceType: "BOTH" }] },
+            where: { 
+                role: "PROVIDER", 
+                isAvailable: true, 
+                isSuspended: false,
+                OR: [{ serviceType }, { serviceType: "BOTH" }] 
+            },
             select: { id: true, latitude: true, longitude: true, baseFee: true, perKmRate: true, businessName: true }
         })
     ]);
