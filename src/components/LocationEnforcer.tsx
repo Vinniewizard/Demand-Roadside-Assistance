@@ -58,22 +58,20 @@ export default function LocationEnforcer({ children }: { children: React.ReactNo
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%' }}>
-            {permissionStatus !== 'granted' && (
-                <div style={{ background: 'hsl(var(--danger))', color: '#fff', padding: '1rem', textAlign: 'center', zIndex: 9999 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                        <ShieldAlert size={20} />
-                        <span style={{ fontWeight: 800 }}>Exact GPS Location Required for optimal rescue dispatch.</span>
-                        {permissionStatus === 'denied' ? (
-                            <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>(Permission Blocked in Browser - Please enable lock icon 🔒)</span>
-                        ) : (
-                            <button onClick={requestLocation} className="btn-premium" style={{ background: '#fff', color: 'hsl(var(--danger))', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
-                                <MapPin size={16} style={{ marginRight: '0.4rem' }} /> AUTHORIZE GPS
-                            </button>
-                        )}
-                    </div>
+            <div style={{ background: 'hsl(var(--danger))', color: '#fff', padding: '1rem', textAlign: 'center', zIndex: 9999 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                    <ShieldAlert size={20} />
+                    <span style={{ fontWeight: 800 }}>Exact GPS Location Required for optimal rescue dispatch.</span>
+                    {permissionStatus === 'denied' ? (
+                        <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>(Permission Blocked in Browser - Please enable lock icon 🔒)</span>
+                    ) : (
+                        <button onClick={requestLocation} className="btn-premium" style={{ background: '#fff', color: 'hsl(var(--danger))', padding: '0.5rem 1rem', fontSize: '0.85rem' }}>
+                            <MapPin size={16} style={{ marginRight: '0.4rem' }} /> AUTHORIZE GPS
+                        </button>
+                    )}
                 </div>
-            )}
-            <div style={{ flex: 1, filter: permissionStatus !== 'granted' ? 'grayscale(0.3)' : 'none', transition: 'filter 0.3s' }}>
+            </div>
+            <div style={{ flex: 1, filter: 'grayscale(0.3)', transition: 'filter 0.3s' }}>
                 {children}
             </div>
         </div>
