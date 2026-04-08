@@ -68,6 +68,29 @@ body {
   box-shadow: 0 40px 70px -15px rgba(0, 0, 0, 0.2);
 }
 
+.glass-vibrant {
+  background: linear-gradient(135deg, hsla(var(--primary) / 0.1), hsla(var(--accent) / 0.1));
+  backdrop-filter: blur(50px) saturate(220%);
+  border: 1px solid hsla(var(--primary) / 0.3);
+}
+
+.card-inner {
+  background: hsla(var(--fg) / 0.03);
+  border: 1px solid hsla(var(--glass-border) / 0.5);
+  border-radius: 20px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.badge-status {
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .btn-premium {
   padding: 0.85rem 1.75rem;
   border-radius: var(--radius-full);

@@ -49,17 +49,27 @@ export async function POST(req: Request) {
     let minDistance = Infinity;
 
     for(const p of providers) {
-      if (p.latitude && p.longitude) {
-        const dist = calculateDistance(latitude, longitude, p.latitude, p.longitude);
-        if (dist < minDistance) {
-          minDistance = dist;
-          nearestProvider = p;
-        }
+      // Fallback simulated Kericho coordinates (-0.3689, 35.2863) if null in dev database
+      const pLat = p.latitude || (-0.3689 + (Math.random() * 0.05 - 0.025));
+      const pLon = p.longitude || (35.2863 + (Math.random() * 0.05 - 0.025));
+
+      const dist = calculateDistance(latitude, longitude, pLat, pLon);
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearestProvider = p;
       }
     }
 
-    // Dynamic Financials based on ACTUAL DISTANCE
-    const baseFee = nearestProvider?.baseFee || 500;
+    // Dynamic Financials based on Service Matrix and Distance
+    const SERVICE_MATRIX: Record<string, number> = {
+        'TOWING': 1500,
+        'MECHANICAL': 1000,
+        'BATTERY': 800,
+        'TYRE': 600,
+        'FUEL': 400
+    };
+
+    const baseFee = SERVICE_MATRIX[serviceType] || nearestProvider?.baseFee || 500;
     const perKmRate = nearestProvider?.perKmRate || 50;
     const deliveryFee = baseFee + (minDistance !== Infinity ? minDistance * perKmRate : 0);
     

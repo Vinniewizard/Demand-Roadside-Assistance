@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -33,6 +33,7 @@ model User {
   longitude    Float?
   isAvailable  Boolean @default(false)
   isApproved   Boolean @default(false) // Admin must approve supplier first
+  isSuspended  Boolean @default(false) // Admin can suspend any user
 
   // Custom Pricing & Revenue
   baseFee      Float?   @default(500)

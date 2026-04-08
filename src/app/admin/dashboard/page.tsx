@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Activity, TrendingUp, List, CheckCircle, AlertCircle, Users, Truck, Navigation, MapPin } from 'lucide-react';
+import { Activity, TrendingUp, List, CheckCircle, AlertCircle, Users, Truck, Navigation, MapPin, Plus, Phone, Calendar, Mail, Shield, UserPlus, X, Edit } from 'lucide-react';
 import SimulationMap from '@/components/LiveTrackerWrapper';
 
 export default function AdminDashboard() {
@@ -9,7 +9,15 @@ export default function AdminDashboard() {
     const [stats, setStats] = useState<any>(null);
     const [recentRequests, setRecentRequests] = useState<any[]>([]);
     const [allSuppliers, setAllSuppliers] = useState<any[]>([]);
+    const [allMotorists, setAllMotorists] = useState<any[]>([]);
+    const [listType, setListType] = useState('PROVIDERS');
     const [loading, setLoading] = useState(true);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [newUser, setNewUser] = useState({ 
+        name: '', email: '', password: '', role: 'Drivers', 
+        phone: '', businessName: '', serviceType: 'TOWING' 
+    });
+    const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
     const fetchData = useCallback(async () => {
         try {
@@ -21,8 +29,11 @@ export default function AdminDashboard() {
             const uData = await usersRes.json();
 
             setStats(sData.stats);
-            setRecentRequests(sData.requests);
-            setAllSuppliers(uData.filter((u: any) => u.role === 'PROVIDER'));
+            setRecentRequests(Array.isArray(sData.requests) ? sData.requests : []);
+            
+            const usersArray = Array.isArray(uData) ? uData : [];
+            setAllSuppliers(usersArray.filter((u: any) => u.role === 'PROVIDER'));
+            setAllMotorists(usersArray.filter((u: any) => u.role !== 'PROVIDER' && u.role !== 'ADMIN'));
         } catch (err) {
             console.error('Admin Fetch Error:', err);
         } finally {
@@ -62,6 +73,71 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleToggleSuspend = async (userId: string, currentStatus: boolean, role: string) => {
+        const nextStatus = !currentStatus;
+
+        // Optimistic UI update
+        if (role === 'PROVIDER') {
+            setAllSuppliers(prev => prev.map(s => s.id === userId ? { ...s, isSuspended: nextStatus } : s));
+        } else {
+            setAllMotorists(prev => prev.map(m => m.id === userId ? { ...m, isSuspended: nextStatus } : m));
+        }
+
+        try {
+            const res = await fetch('/api/admin/suspend', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, isSuspended: nextStatus })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error);
+        } catch (err) {
+            alert('Core Error: Suspend action failed.');
+            fetchData();
+        }
+    };
+
+    const handleSaveUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const url = editingUserId ? '/api/admin/users' : '/api/admin/users';
+            const method = editingUserId ? 'PATCH' : 'POST';
+            const body = editingUserId ? { userId: editingUserId, ...newUser } : newUser;
+
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(editingUserId ? 'Account details updated successfully!' : 'Account securely registered in Kericho Hub!');
+                setShowAddForm(false);
+                setEditingUserId(null);
+                setNewUser({ name: '', email: '', password: '', role: 'Drivers', phone: '', businessName: '', serviceType: 'TOWING' });
+                fetchData();
+            } else {
+                alert(data.error || 'Operation failed');
+            }
+        } catch (err) {
+            alert('System Link Error.');
+        }
+    };
+
+    const startEditing = (u: any) => {
+        setEditingUserId(u.id);
+        setNewUser({
+            name: u.name,
+            email: u.email,
+            password: '', // Leave empty for edits unless you want to support pwd resets here
+            role: u.role,
+            phone: u.phone || '',
+            businessName: u.businessName || '',
+            serviceType: u.serviceType || 'TOWING'
+        });
+        setShowAddForm(true);
+    };
+
     if (loading || !stats) return <div style={{ padding: '8rem' }}>Kericho Core Hub: High-Speed Link Established...</div>;
 
     return (
@@ -94,8 +170,8 @@ export default function AdminDashboard() {
                     <div className="animate-fade-up">
                         <div className="grid-auto" style={{ gap: '1.5rem', marginBottom: '3.5rem' }}>
                             <StatCard label="Approved Supplies" value={allSuppliers.filter(s => s.isApproved).length} grow="Network Active" />
+                            <StatCard label="Waiting Motorists" value={stats?.pendingRequests || 0} grow="Users currently in need or waiting" />
                             <StatCard label="Profit Tracker" value={`KES ${stats?.totalCommission?.toLocaleString() || '0'}`} grow="+10% / Dispatch" />
-                            <StatCard label="Manual Override" value={allSuppliers.length} grow="Total Kericho Network" />
                         </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr', gap: '2.5rem' }}>
@@ -138,22 +214,101 @@ export default function AdminDashboard() {
                                 </table>
                             </div>
 
-                            <div className="glass-panel" style={{ padding: '2rem', border: '1.5px solid hsla(var(--primary) / 0.2)' }}>
-                                <h3 className="font-heading" style={{ marginBottom: '1.5rem', fontSize: '1.25rem' }}>Platform Providers</h3>
+                            <div className="glass-panel" style={{ padding: '2rem', border: '1.5px solid hsla(var(--primary) / 0.2)', maxHeight: '800px', overflowY: 'auto' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                    <h3 className="font-heading" style={{ fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        Core Registry 
+                                        <button onClick={() => setShowAddForm(true)} className="btn-premium btn-primary" style={{ padding: '0.4rem', borderRadius: '50%' }}>
+                                            <Plus size={16} />
+                                        </button>
+                                    </h3>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button onClick={() => setListType('PROVIDERS')} className={`btn-premium ${listType === 'PROVIDERS' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}>Providers</button>
+                                        <button onClick={() => setListType('MOTORISTS')} className={`btn-premium ${listType === 'MOTORISTS' ? 'btn-primary' : 'btn-outline'}`} style={{ padding: '0.4rem 0.8rem', fontSize: '0.7rem' }}>Motorists</button>
+                                    </div>
+                                </div>
+
+                                {showAddForm && (
+                                    <div className="glass-panel animate-fade-up" style={{ padding: '1.5rem', marginBottom: '2rem', border: '1px solid hsl(var(--primary))' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                                            <h4 style={{ fontWeight: 900, fontSize: '0.8rem' }}>{editingUserId ? 'EDIT REGISTRY ACCOUNT' : 'DIRECT ACCOUNT REGISTRATION'}</h4>
+                                            <button onClick={() => { setShowAddForm(false); setEditingUserId(null); }}><X size={16} /></button>
+                                        </div>
+                                        <form onSubmit={handleSaveUser} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                            <input className="input-elegant" placeholder="Full Name" value={newUser.name} onChange={e => setNewUser({...newUser, name: e.target.value})} required />
+                                            <input className="input-elegant" placeholder="Email Address" type="email" value={newUser.email} onChange={e => setNewUser({...newUser, email: e.target.value})} required />
+                                            {!editingUserId && <input className="input-elegant" placeholder="Security Password" type="password" value={newUser.password} onChange={e => setNewUser({...newUser, password: e.target.value})} required />}
+                                            <input className="input-elegant" placeholder="Phone Link" value={newUser.phone} onChange={e => setNewUser({...newUser, phone: e.target.value})} />
+                                            <select className="input-elegant" value={newUser.role} onChange={e => setNewUser({...newUser, role: e.target.value})}>
+                                                <option value="Drivers">Motorist (Driver)</option>
+                                                <option value="PROVIDER">Service Provider (Supplier)</option>
+                                            </select>
+                                            {newUser.role === 'PROVIDER' && (
+                                                <>
+                                                    <input className="input-elegant" placeholder="Business Name" value={newUser.businessName} onChange={e => setNewUser({...newUser, businessName: e.target.value})} />
+                                                    <select className="input-elegant" value={newUser.serviceType} onChange={e => setNewUser({...newUser, serviceType: e.target.value})}>
+                                                        <option value="TOWING">Towing</option>
+                                                        <option value="FUEL">Fuel Support</option>
+                                                        <option value="MECHANICAL">Mechanical</option>
+                                                        <option value="TYRE">Tyre Fix</option>
+                                                        <option value="BATTERY">Battery Jump</option>
+                                                        <option value="BOTH">Full Support</option>
+                                                    </select>
+                                                </>
+                                            )}
+                                            <button type="submit" className="btn-premium btn-primary" style={{ gridColumn: 'span 2' }}>{editingUserId ? 'COMMIT CHANGES' : 'ENABLE SYSTEM ACCESS'}</button>
+                                        </form>
+                                    </div>
+                                )}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                    {allSuppliers.map(s => (
-                                        <div key={s.id} style={{ padding: '1.25rem', borderRadius: '20px', background: s.isApproved ? 'transparent' : 'hsla(var(--primary) / 0.05)', border: '1px solid hsla(var(--glass-border) / 0.5)' }}>
+                                    {listType === 'PROVIDERS' ? allSuppliers.map(s => (
+                                        <div key={s.id} style={{ padding: '1.25rem', borderRadius: '20px', background: s.isApproved ? (s.isSuspended ? 'hsla(var(--danger) / 0.1)' : 'transparent') : 'hsla(var(--primary) / 0.05)', border: `1px solid ${s.isSuspended ? 'hsl(var(--danger))' : 'hsla(var(--glass-border) / 0.5)'}` }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <div>
-                                                    <p style={{ fontWeight: 800, fontSize: '0.9rem' }}>{s.businessName || s.name}</p>
-                                                    <p style={{ fontSize: '0.65rem', opacity: 0.6 }}>{s.isApproved ? 'APPROVED & LIVE' : 'WAITING'}</p>
+                                                    <p style={{ fontWeight: 800, fontSize: '0.9rem', color: s.isSuspended ? 'hsl(var(--danger))' : 'inherit', textDecoration: s.isSuspended ? 'line-through' : 'none' }}>{s.businessName || s.name}</p>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
+                                                        <p style={{ fontSize: '0.65rem', opacity: 0.6, display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Mail size={10} /> {s.email}</p>
+                                                        <p style={{ fontSize: '0.65rem', opacity: 0.6, display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Phone size={10} /> {s.phone || '---'}</p>
+                                                        <p style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 700, color: 'hsl(var(--primary))' }}>Joined: {new Date(s.createdAt).toLocaleDateString()}</p>
+                                                    </div>
                                                 </div>
-                                                <button
-                                                    onClick={() => handleToggleStatus(s.id, s.isApproved)}
-                                                    className={`btn-premium ${s.isApproved ? 'btn-outline' : 'btn-primary'}`}
-                                                    style={{ padding: '0.5rem 1rem', fontSize: '0.75rem', borderRadius: 'var(--radius-full)' }}>
-                                                    {s.isApproved ? 'Suspend' : 'Approve'}
-                                                </button>
+                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                    <button onClick={() => startEditing(s)} className="btn-premium btn-outline" style={{ padding: '0.4rem', borderRadius: '50%', color: 'hsl(var(--primary))' }} title="Edit Details"><Edit size={12} /></button>
+                                                    <button
+                                                        onClick={() => handleToggleSuspend(s.id, s.isSuspended, 'PROVIDER')}
+                                                        className="btn-premium btn-outline"
+                                                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.65rem', borderRadius: 'var(--radius-full)', color: s.isSuspended ? 'var(--fg)' : 'hsl(var(--danger))', borderColor: s.isSuspended ? 'var(--glass-border)' : 'hsla(var(--danger)/0.5)' }}>
+                                                        {s.isSuspended ? 'Unsuspend' : 'Ban'}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleToggleStatus(s.id, s.isApproved)}
+                                                        className={`btn-premium ${s.isApproved ? 'btn-outline' : 'btn-primary'}`}
+                                                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.65rem', borderRadius: 'var(--radius-full)' }}>
+                                                        {s.isApproved ? 'Revoke' : 'Approve'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )) : allMotorists.map(m => (
+                                        <div key={m.id} style={{ padding: '1.25rem', borderRadius: '20px', background: m.isSuspended ? 'hsla(var(--danger) / 0.1)' : 'transparent', border: `1px solid ${m.isSuspended ? 'hsl(var(--danger))' : 'hsla(var(--glass-border) / 0.5)'}` }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <div>
+                                                    <p style={{ fontWeight: 800, fontSize: '0.9rem', color: m.isSuspended ? 'hsl(var(--danger))' : 'inherit', textDecoration: m.isSuspended ? 'line-through' : 'none' }}>{m.name}</p>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
+                                                        <p style={{ fontSize: '0.65rem', opacity: 0.6, display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Mail size={10} /> {m.email}</p>
+                                                        <p style={{ fontSize: '0.65rem', opacity: 0.6, display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Phone size={10} /> {m.phone || '---'}</p>
+                                                        <p style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 700, color: 'hsl(var(--primary))' }}>Joined: {new Date(m.createdAt).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                    <button onClick={() => startEditing(m)} className="btn-premium btn-outline" style={{ padding: '0.4rem', borderRadius: '50%', color: 'hsl(var(--primary))' }} title="Edit Details"><Edit size={12} /></button>
+                                                    <button
+                                                        onClick={() => handleToggleSuspend(m.id, m.isSuspended, 'MOTORIST')}
+                                                        className="btn-premium btn-outline"
+                                                        style={{ padding: '0.4rem 0.8rem', fontSize: '0.65rem', borderRadius: 'var(--radius-full)', color: m.isSuspended ? 'var(--fg)' : 'hsl(var(--danger))', borderColor: m.isSuspended ? 'var(--glass-border)' : 'hsla(var(--danger)/0.5)' }}>
+                                                        {m.isSuspended ? 'Unsuspend' : 'Ban'}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}

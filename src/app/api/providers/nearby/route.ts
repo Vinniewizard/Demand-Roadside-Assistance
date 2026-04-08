@@ -34,12 +34,14 @@ export async function GET(req: Request) {
     // Calculate distances and sort
     const nearby = providers
       .map(p => {
-        const distance = p.latitude && p.longitude 
-          ? calculateDistance(lat, lon, p.latitude, p.longitude)
-          : Infinity;
+        // Fallback simulated Kericho coordinates (-0.3689, 35.2863) if null in dev database
+        const pLat = p.latitude || (-0.3689 + (Math.random() * 0.05 - 0.025));
+        const pLon = p.longitude || (35.2863 + (Math.random() * 0.05 - 0.025));
+
+        const distance = calculateDistance(lat, lon, pLat, pLon);
         return { ...p, distance };
       })
-      .filter(p => p.distance !== Infinity && p.distance < 100) // Within 100km
+      .filter(p => p.distance < 100) // Within 100km
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 5); // Top 5
 

@@ -32,18 +32,19 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       }
     }
 
+    const updateData: any = {};
+    if (status !== undefined) updateData.status = status;
+    if (isPaid !== undefined) updateData.isPaid = isPaid;
+    if (rating !== undefined) updateData.rating = rating;
+    if (paymentMethod !== undefined) updateData.paymentMethod = paymentMethod;
+    if (latitude !== undefined) updateData.latitude = latitude;
+    if (longitude !== undefined) updateData.longitude = longitude;
+    if (status === 'ACCEPTED') updateData.acceptedAt = new Date();
+    if (status === 'COMPLETED') updateData.completedAt = new Date();
+
     const updatedRequest = await prisma.assistanceRequest.update({
       where: { id },
-      data: { 
-          status,
-          isPaid,
-          rating,
-          paymentMethod,
-          ...(latitude !== undefined ? { latitude } : {}),
-          ...(longitude !== undefined ? { longitude } : {}),
-          acceptedAt: status === 'ACCEPTED' ? new Date() : undefined,
-          completedAt: status === 'COMPLETED' ? new Date() : undefined
-      },
+      data: updateData,
       include: { user: true, provider: true }
     });
 
